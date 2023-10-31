@@ -1,64 +1,50 @@
-from fastapi import (
-  APIRouter, Depends, HTTPException, Security, status
-)
-from fastapi.security import OAuth2PasswordRequestForm
+from fastapi import APIRouter, Depends, HTTPException
 from models.user import UserModel
 from schemas.user import UserSchema
-from utils.auth import (
-    create_token, hash_password, verify_password,
-    get_current_user, oauth2_scheme
-)
+from utils.auth import create_access_token, get_current_user, verify_password
 
 user = APIRouter()
 
 @user.post("/login")
-def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    # 查询用户（示例）
-    try:
-        user_dict = UserModel.get(username=form_data.username)
-    except:
-        raise HTTPException(status_code=400, detail="Incorrect username")
-
-    # 验证密码
-    if verify_password(form_data.password, user_dict.password):
-        # 验证成功，生成令牌
-        token = create_token(user_dict.username)
-        return {"token": token}
-    else:
-        # 验证失败，返回错误信息
-        raise HTTPException(status_code=400, detail="Incorrect password")
+def login(username: str, password: str):
+    user = UserModel.get_or_none(username=username)
+    if not user or not verify_password(password, user.password):
+        raise HTTPException(status_code=401, detail="Invalid username or password")
+    access_token = create_access_token(user.username)
+    return {"access_token": access_token, "token_type": "bearer"}
 
 @user.post("/register")
 def register(user_data: UserSchema):
-    # 检查是否已存在具有相同用户名的用户
     if UserModel.select().where(UserModel.username == user_data.username).exists():
-        return {"error": "Username already exists"}
-
-    # 创建新用户
+        raise HTTPException(status_code=400, detail="User already exists")
+    # hashed_password = get_password_hash(user_data.password)
     new_user = UserModel(
         username=user_data.username,
-        password=hash_password(user_data.password),
+        password=user_data.password,
         email=user_data.email,
         disabled=False
     )
     new_user.save()
+    return {"message": "User registered successfully"}
 
-    # 生成令牌
-    token = create_token(user_data.username)
-    return {"token": token}
+@user.put("/me/password")
+def change_password(password: str, new_password: str, current_user: UserSchema = Depends(get_current_user)):
+    user = UserModel.get_by_id(current_user.id)
+    if not verify_password(password, user.password):
+        raise HTTPException(status_code=401, detail="Invalid password")
 
-def secure_route(function):
-    async def wrapper(token: str = Security(oauth2_scheme)):
-        return await function(token)
+    # user.password = get_password_hash(new_password)
+    user.password = new_password
+    user.save()
+    return {"message": "Password changed successfully"}
 
-    return wrapper
+@user.delete("/me")
+def delete_user(current_user: int = Depends(get_current_user)):
+    user = UserModel.get(id=current_user)
+    user.delete_instance()
+    return {"message": "User deleted successfully"}
 
-@user.get("/current_user")
-def current_user(current_user: str = Depends(get_current_user)):
-    if not current_user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid authentication credentials",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    return current_user
+@user.post("/logout")
+def logout():
+    # 在此处实现退出登录的逻辑，例如删除或失效用户的访问令牌
+    return {"message": "Logged out successfully"}

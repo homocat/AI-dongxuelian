@@ -8,7 +8,7 @@ from peewee import (
 from models.user import UserModel
 
 class TodoModel(Model):
-  user = ForeignKeyField(UserModel, backref="todolist")
+  user = ForeignKeyField(UserModel.id, backref="todolist")
   content = CharField()
   isCompleted = BooleanField()
 
