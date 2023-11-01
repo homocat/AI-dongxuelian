@@ -38,7 +38,7 @@ function handleLogin(username, password) {
 
 <style scoped>
     .box {
-      background-image: url("src/assets/bk.jpg");
+      background-image: url("src/images/bk.jpg");
       width: 100vw;
       height: 100vh;
       background-size: cover;

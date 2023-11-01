@@ -26,7 +26,9 @@ function toLoginPage() {
       <el-menu-item index="2">
         <router-link to="/health"> 身体数据 </router-link>
       </el-menu-item> 
-
+      <el-menu-item index="12">
+        <router-link to="/spark"> AI健康助手 </router-link>
+      </el-menu-item> 
 
       <el-menu-item index="5">
         <!-- 用户头像 -->
@@ -45,7 +47,7 @@ function toLoginPage() {
           </span>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item @click="handleLogout">退出登录</el-dropdown-item>
+              <el-dropdown-item @click="handleLogout" >退出登录</el-dropdown-item>
               <el-dropdown-item @click="toLoginPage">登录</el-dropdown-item>
             </el-dropdown-menu>
           </template>

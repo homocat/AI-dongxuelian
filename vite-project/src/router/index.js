@@ -19,6 +19,10 @@ const routes = [
         path: "/about",
         component: () => import("../view/About.vue")
       },
+      {
+        path: "/spark",
+        component: () => import("../view/Spark.vue")
+      }
     ]
   },
   {
