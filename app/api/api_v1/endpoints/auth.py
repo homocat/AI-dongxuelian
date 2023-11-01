@@ -18,7 +18,7 @@ from utils.auth import ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token
 
 auth = APIRouter()
 
-@auth.post("/token", response_model=Token)
+@auth.post("/", response_model=Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     user = UserModel.get(UserModel.username == form_data.username)
     if not user:
