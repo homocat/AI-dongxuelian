@@ -48,10 +48,9 @@ async def index(req: str):
     SparkApi.answer =""
     SparkApi.main(appid,api_key,api_secret,Spark_url,domain,question)
     getText("assistant",SparkApi.answer)
-
     client = Client("https://www.modelscope.cn/api/v1/studio/xzjosh/Azuma-Bert-VITS2/gradio/")
     result = client.predict(
-				str(text),	# str in 'Text' Textbox component
+				str(text[1].content),	# str in 'Text' Textbox component
 				"Azuma",	# str (Option from: ['Azuma']) in 'Speaker' Dropdown component
 				0.2,	# int | float (numeric value between 0.1 and 1) in 'SDP/DP混合比' Slider component
 				0.5,	# int | float (numeric value between 0.1 and 1) in '感情调节' Slider component
