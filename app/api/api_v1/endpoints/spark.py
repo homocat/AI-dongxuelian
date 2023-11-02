@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from gradio_client import Client
 import SparkApi
 
 #以下密钥信息从控制台获取
@@ -40,11 +41,22 @@ def checklen(text):
         del text[0]
     return text
 @spark_api.post("/")
-def index(req: str):
+async def index(req: str):
     text.clear()
     question = checklen(getText("user", req))
     SparkApi.answer =""
     SparkApi.main(appid,api_key,api_secret,Spark_url,domain,question)
     getText("assistant",SparkApi.answer)
-    return text
+
+    client = Client("https://www.modelscope.cn/api/v1/studio/xzjosh/Azuma-Bert-VITS2/gradio/")
+    result = client.predict(
+				str(text),	# str in 'Text' Textbox component
+				"Azuma",	# str (Option from: ['Azuma']) in 'Speaker' Dropdown component
+				0.2,	# int | float (numeric value between 0.1 and 1) in 'SDP/DP混合比' Slider component
+				0.5,	# int | float (numeric value between 0.1 and 1) in '感情调节' Slider component
+				0.9,	# int | float (numeric value between 0.1 and 1) in '音素长度' Slider component
+				1,	# int | float (numeric value between 0.1 and 2) in '生成长度' Slider component
+				fn_index=0
+    )
+    return result
 
