@@ -59,8 +59,6 @@ async def index(req: str):
 				1,	# int | float (numeric value between 0.1 and 2) in '生成长度' Slider component
 				fn_index=0
     )
-    return FileResponse(
-        result, 
-        media_type="audio/wav")
+    return FileResponse(result[1], media_type="audio/wav", filename="main.wav")
     return result
 
