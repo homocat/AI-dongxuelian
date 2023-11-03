@@ -43,16 +43,13 @@ function playAudio() {
         {{ item }}
       </div>
       <!-- AI语音 -->
-      <div class="voice-box" v-if="loading && sended">
-        正在加载...
-      </div>
-      <div class="voice" v-else>
-        <audio 
-          :src='address' 
-          ref="audioElement" 
-          controls="controls"
-          class="loaded" 
-          @click="playAudio"/>
+      <div class="display" v-if="sended">
+        <div class="voice-box" v-if="loading">
+          正在加载...
+        </div>
+        <div class="voice" v-else>
+          <audio :src='address' ref="audioElement" controls="controls" class="loaded" @click="playAudio" />
+        </div>
       </div>
     </div>
 
