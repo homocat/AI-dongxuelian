@@ -20,10 +20,6 @@ import NavBar from '../components/Home/NavBar.vue';
 
 
 <style scoped>
-.head {
-  /* background-color: #333; */
-  min-height: 15vh;
-}
 .main-container {
   min-height: 85vh;
   background: #666;

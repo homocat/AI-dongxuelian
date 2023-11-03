@@ -7,8 +7,10 @@ let inputs = [];
 let input = ref('');
 let address = ref('');
 let loading = ref(true)
+let sended = ref(false)
 
 async function handleSend() {
+  sended.value = true
   inputs.push(input.value);
   const response = await axios.post('http://101.42.31.45/v1/ai/', null, {
     params: {
@@ -41,7 +43,7 @@ function playAudio() {
         {{ item }}
       </div>
       <!-- AI语音 -->
-      <div class="voice-box" v-if="loading">
+      <div class="voice-box" v-if="loading && sended">
         正在加载...
       </div>
       <div class="voice" v-else>
