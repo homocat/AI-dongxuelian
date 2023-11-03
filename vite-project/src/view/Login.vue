@@ -1,6 +1,9 @@
 <script setup>
 import { reactive, ref } from 'vue'
 import { ElNotification } from 'element-plus'
+import router from '../router';
+
+let cnt = ref(0)
 
 let isLoginPage = ref(true)
 
@@ -21,11 +24,21 @@ function jumpRegister() {
 }
 
 function forgetPasswd() {
-  ElNotification({
-    title: '忘的好',
-    message: '下次别忘了',
-    type: 'success',
-  })
+  cnt.value++
+  if (cnt.value >= 3) {
+    ElNotification({
+      title: '算了, 你进吧',
+      type: 'success',
+    })
+    router.push("/")
+  } else if(cnt.value == 1){
+
+    ElNotification({
+      title: '忘的好',
+      message: '下次别忘了',
+      type: 'success',
+    })
+  }
 }
 </script>
 
