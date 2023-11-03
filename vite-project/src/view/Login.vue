@@ -1,5 +1,6 @@
 <script setup>
 import { reactive, ref } from 'vue'
+import { ElNotification } from 'element-plus'
 
 let isLoginPage = ref(true)
 
@@ -20,7 +21,11 @@ function jumpRegister() {
 }
 
 function forgetPasswd() {
-  alert("下次别忘了")
+  ElNotification({
+    title: '忘的好',
+    message: '下次别忘了',
+    type: 'success',
+  })
 }
 </script>
 
