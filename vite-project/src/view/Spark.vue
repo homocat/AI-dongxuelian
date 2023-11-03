@@ -1,42 +1,79 @@
 <script setup>
 import { ref } from 'vue';
-import { Promotion } from '@element-plus/icons-vue'
+import { Promotion } from '@element-plus/icons-vue';
+import axios from 'axios';
 
-function uploadFormData() {
-    var formData = new FormData();
-    var alphaArray = ['A', 'B', 'C','D','E'];
-    for (var i = 0; i < alphaArray.length; i++) {
-        formData.append('stop', alphaArray [i]);
-    }
-    formData.append("prompt", "test");
-    axios({
-            method: 'post',
-            url: '/engines/completions',
-            data: formData,
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-        })
-        .then(response => {
-            console.log(response);
-        })
-        .catch(error => {
-            console.error(error);
-        });
+let inputs = [];
+let input = ref('');
+let address = ref('');
+let loading = ref(true)
+
+async function handleSend() {
+  inputs.push(input.value);
+  const response = await axios.post('http://101.42.31.45/v1/ai/', null, {
+    params: {
+      req: input.value
+    },
+    responseType: 'blob'
+  });
+  loading = false
+
+  const audioBlob = new Blob([response.data], { type: 'audio/wav' });
+  const audioUrl = URL.createObjectURL(audioBlob);
+  address.value = audioUrl
+
+  input.value = '';
 }
 
-const input = ref('')
+function playAudio() {
+  audioElement.value.play()
+}
 </script>
 
 <template>
   <div class="gpt">
     <h2>AI健康助手</h2>
-    <el-input v-model="input" placeholder="Please input" />
-    <el-button>
-      <el-icon><Promotion /></el-icon>
+
+    <!-- 对话框 -->
+    <div class="dialog">
+      <!-- 输入文字 -->
+      <div class="you" v-for="item in inputs">
+        {{ item }}
+      </div>
+      <!-- AI语音 -->
+      <div class="voice-box" v-if="loading">
+        正在加载...
+      </div>
+      <div class="voice" v-else>
+        <audio 
+          :src='address' 
+          ref="audioElement" 
+          controls="controls"
+          class="loaded" 
+          @click="playAudio"/>
+      </div>
+    </div>
+
+    <!-- 输入框 -->
+    <el-input v-model="input"></el-input>
+    <!-- 发送按钮 -->
+    <el-button @click="handleSend">
+      <el-icon>
+        <Promotion />
+      </el-icon>
     </el-button>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.dialog {
+  border: 1px solid salmon;
+  width: 90vw;
+  height: 20vh;
+}
+
+.voice-box .voice {
+  width: 100px;
+  height: 50px;
+}
+</style>
