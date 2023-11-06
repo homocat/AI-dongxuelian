@@ -2,6 +2,8 @@
 import { ref } from 'vue';
 import { Promotion } from '@element-plus/icons-vue';
 import axios from 'axios';
+import Nahida from './Nahida/Index.vue';
+Nahida
 
 let input = ref('');
 let address = ref('');
@@ -58,6 +60,9 @@ function playAudio() {
     <div class="loading" v-else>
       正在加载...
     </div>
+
+    <!-- nahida -->
+    <Nahida />
   </div>
 </template>
 
