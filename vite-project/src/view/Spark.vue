@@ -88,7 +88,7 @@ onMounted(() => {
         </div>
 
         <!-- 输入框 -->
-        <el-input v-model="input" :autosize="{ minRows: 1, maxRows: 3 }" type="textarea" placeholder="请输入..."
+        <el-input v-model="input" :autosize="{ minRows: 1, maxRows: 3 }" type="textarea" placeholder="Shift + Enter 发送消息"
           class="input-text" />
       </el-aside>
     </el-container>
