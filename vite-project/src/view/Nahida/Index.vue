@@ -24,12 +24,12 @@
           model = await Live2DModel.from('../../../public/Hiyori/Hiyori.model3.json');
 
           app.stage.addChild(model);
-          model.scale.set(0.1); // 调整缩放比例，一般原始资源尺寸非常大，需要缩小
+          model.scale.set(0.23); // 调整缩放比例，一般原始资源尺寸非常大，需要缩小
       },
 
       beforeUnmount(){
           model?.destroy();
           app?.destroy();
-      }
+          model.expression('../../../public/Hiyori/motions/Hiyori_m01.motion3.json');}
   }
 </script>

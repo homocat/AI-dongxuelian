@@ -1,7 +1,6 @@
 <script setup>
 import { ElNotification } from 'element-plus'
 import { onMounted, ref } from 'vue';
-import { Promotion } from '@element-plus/icons-vue';
 import axios from 'axios';
 import Nahida from './Nahida/Index.vue';
 Nahida
@@ -13,7 +12,7 @@ let loading = ref(false)
 let sended = ref(false)
 
 async function handleSend() {
-  if (input.value === '') {
+  if (input.value.trim() === '') {
     ElNotification({
       title: '请输入',
       type: 'error',
@@ -21,12 +20,14 @@ async function handleSend() {
     })
     return
   }
-  dialogs.push({ question: input, ans: '' })
+  dialogs.push({question: "尊嘟假嘟? o.O"})
+  const tmp = input.value
+  input.value = '';
   sended.value = true
   loading.value = true
   const response = await axios.post('http://101.42.31.45/v1/ai/', null, {
     params: {
-      req: input.value
+      req: tmp
     },
     responseType: 'blob'
   });
@@ -35,8 +36,8 @@ async function handleSend() {
   const audioUrl = URL.createObjectURL(audioBlob);
   address.value = audioUrl
 
-  dialogs.at(-1).ans = audioUrl
-  input.value = '';
+  dialogs.pop()
+  dialogs.push({ question: tmp, ans: audioUrl })
   sended.value = false
   loading.value = false
 }
@@ -50,13 +51,13 @@ onMounted(() => {
   window.addEventListener('keydown', (e) => {
     if (loading.value && e.key === 'Enter') {
       ElNotification({
-        title: '请勿重复输入',
+        title: '请稍等',
         type: 'warning',
         duration: 300
       })
       return
     }
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && e.shiftKey) {
       handleSend()
     }
   })
@@ -67,34 +68,28 @@ onMounted(() => {
   <div class="gpt">
     <h2 class="title">AI健康助手</h2>
     <el-container>
-      <el-main class="hahida">
+      <el-main>
         <!-- nahida -->
-        <Nahida />
+        <Nahida class="nahida" />
       </el-main>
-      <el-aside width="70vw">
+      <el-aside width="50vw">
 
         <!-- 对话框 -->
         <div class="dialog">
-          <div class="one-message" v-for="item in dialogs">
-            <div class="ans">{{ item.question.value }}</div>
-            <audio v-if="!loading" :src="item.ans" ref="audioElement" controls="controls" @click="playAudio"
-              class="voice"></audio>
-            <div v-else class="voice">loading...</div>
+          <div class="one-message" v-for="(item, index) in dialogs">
+            <el-input v-model="item.question" disabled autosize class="ans" type="textarea" placeholder="Please input" />
+            <div v-if="loading && index === dialogs.length - 1" class="voice">
+              <img src="../images/Spinner-1s-200px.gif" alt="">
+              <span style="color: gray; font-size: 10px;"> 加载大约需要20s </span>
+            </div>
+            <audio v-else :src="item.ans" ref="audioElement" controls="controls" @click="playAudio" class="voice"></audio>
+
           </div>
         </div>
 
         <!-- 输入框 -->
-        <input v-model="input" class="input-text" placeholder="请输入..." />
-        <!-- 发送按钮 -->
-        <el-button @click="handleSend" v-if="!sended && !loading" class="send-btn">
-          <el-icon>
-            <Promotion />
-          </el-icon>
-        </el-button>
-        <span class="loading" v-else>
-          正在加载...
-        </span>
-
+        <el-input v-model="input" :autosize="{ minRows: 1, maxRows: 3 }" type="textarea" placeholder="请输入..."
+          class="input-text" />
       </el-aside>
     </el-container>
   </div>
@@ -103,7 +98,6 @@ onMounted(() => {
 <style scoped>
 .gpt {
   text-align: center;
-  height: 100vh;
 }
 
 .title {
@@ -127,21 +121,23 @@ onMounted(() => {
   padding-top: 10px;
   box-shadow: 0px 4px 10px 5px rgba(128, 0, 0, 0.13);
   border-radius: 15px;
-  height: 60vh;
-  display: flex;
+  height: 35vh;
+  overflow: hidden;
+  overflow-y: scroll;
 }
 
 .input-text {
-  padding-left: 10px;
-  margin-right: 10px;
-  border-radius: 10px;
-  margin-top: 30px;
   width: 80%;
-  height: 50px;
-  font-size: 18px;
-  border: none;
-  box-shadow: 0px 4px 10px 5px rgba(128, 0, 0, 0.13);
-  border: none;
+  height: 30px;
+  margin-top: 30px;
+}
+
+.one-message {
+  text-align: left;
+}
+
+.one-message .voice {
+  margin: 10px;
 }
 
 .send-btn {
@@ -150,17 +146,20 @@ onMounted(() => {
   margin-left: 10px;
 }
 
-/* .voice-box .voice {
-  width: 100px;
+.voice img {
+  width: 55px;
   height: 50px;
-} */
+  background-color: red;
+}
+
 .one-message {
   margin-left: 10px;
   margin-right: 10px;
 }
 
 .one-message .ans {
-  justify-content: end;
+  border-radius: 10px;
+  background-color: rgb(103, 174, 103);
 }
 
 .one-message .voice {
@@ -168,5 +167,7 @@ onMounted(() => {
 }
 
 .nahida {
-  background-color: #f40;
-}</style>
+  width: 150%;
+  height: 100%;
+}
+</style>
