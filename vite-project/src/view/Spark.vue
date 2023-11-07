@@ -68,7 +68,7 @@ onMounted(() => {
   <div class="gpt">
     <h2 class="title">AI健康助手</h2>
     <el-container>
-      <el-main>
+      <el-main class="f-position">
         <!-- nahida -->
         <Nahida class="nahida" />
       </el-main>
@@ -169,5 +169,10 @@ onMounted(() => {
 .nahida {
   width: 150%;
   height: 100%;
+  position: center;
+}
+
+.f-position::-webkit-scrollbar {
+  display: none;
 }
 </style>
