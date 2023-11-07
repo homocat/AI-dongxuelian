@@ -1,0 +1,16 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "18169894",
+      "name": "音频,声音,声纹",
+      "font_class": "voiceprint-full",
+      "unicode": "e953",
+      "unicode_decimal": 59731
+    }
+  ]
+}

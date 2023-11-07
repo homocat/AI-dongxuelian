@@ -3,7 +3,7 @@ import { ElNotification } from 'element-plus'
 import { onMounted, ref } from 'vue';
 import axios from 'axios';
 import Nahida from './Nahida/Index.vue';
-Nahida
+import '../../public/font_m3kibal6kh/iconfont.css'
 
 let input = ref('');
 let address = ref('');
@@ -12,16 +12,16 @@ let loading = ref(false)
 let sended = ref(false)
 
 async function handleSend() {
-  if (input.value.trim() === '') {
+  if (input.value.trim() === '' || input.value.length <= 3) {
     ElNotification({
-      title: '请输入',
-      type: 'error',
+      title: '请输入有效问题',
+      type: 'warning',
       duration: 300
     })
     return
   }
   dialogs.push({question: "尊嘟假嘟? o.O"})
-  const tmp = input.value
+  const tmp = input.value.replace(/[\r\n]/g,"")
   input.value = '';
   sended.value = true
   loading.value = true
@@ -42,9 +42,26 @@ async function handleSend() {
   loading.value = false
 }
 
-function playAudio() {
-  audioElement.value.play()
-  console.log(audioElement.value.src);
+function playAudio(url) {
+  playWavFile(url)
+}
+
+function playWavFile(url) {
+  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  const request = new XMLHttpRequest();
+  request.open('GET', url, true);
+  request.responseType = 'arraybuffer';
+
+  request.onload = function() {
+    audioContext.decodeAudioData(request.response, function(buffer) {
+      const source = audioContext.createBufferSource();
+      source.buffer = buffer;
+      source.connect(audioContext.destination);
+      source.start(0);
+    });
+  };
+
+  request.send();
 }
 
 onMounted(() => {
@@ -78,17 +95,24 @@ onMounted(() => {
         <div class="dialog">
           <div class="one-message" v-for="(item, index) in dialogs">
             <el-input v-model="item.question" disabled autosize class="ans" type="textarea" placeholder="Please input" />
-            <div v-if="loading && index === dialogs.length - 1" class="voice">
+            <div v-if="loading && index === dialogs.length - 1" class="loading">
               <img src="../images/Spinner-1s-200px.gif" alt="">
               <span style="color: gray; font-size: 10px;"> 加载大约需要20s </span>
             </div>
-            <audio v-else :src="item.ans" ref="audioElement" controls="controls" @click="playAudio" class="voice"></audio>
+            <div class="voice" 
+              :style="{ width: item.question.length*12 + 'px' }" 
+              v-else 
+              @click="playAudio(item.ans)"
+            >
+              <span class="iconfont icon-voiceprint-full"></span>
+              <span class="seconds"> {{ item.question.length }}s </span>
+            </div>
 
           </div>
         </div>
 
         <!-- 输入框 -->
-        <el-input v-model="input" :autosize="{ minRows: 1, maxRows: 3 }" type="textarea" placeholder="Shift + Enter 发送消息"
+        <el-input v-model="input" autosize type="textarea" placeholder="Shift + Enter 发送消息"
           class="input-text" />
       </el-aside>
     </el-container>
@@ -96,6 +120,20 @@ onMounted(() => {
 </template>
 
 <style scoped>
+@font-face {
+  font-family: 'iconfont';
+  src: url('../../public/font_m3kibal6kh/iconfont.ttf') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 18px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  float: left;
+  margin-left: 10px;
+}
 .gpt {
   text-align: center;
 }
@@ -146,12 +184,6 @@ onMounted(() => {
   margin-left: 10px;
 }
 
-.voice img {
-  width: 55px;
-  height: 50px;
-  background-color: red;
-}
-
 .one-message {
   margin-left: 10px;
   margin-right: 10px;
@@ -163,7 +195,25 @@ onMounted(() => {
 }
 
 .one-message .voice {
+  padding-top: 10px;
+  padding-right: 10px;
+  height: 30px;
   justify-content: start;
+  background-color: rgb(90, 204, 90);
+  border-radius: 13px;
+  box-shadow: 10 2 13 green;
+}
+
+.one-message .voice .seconds {
+  font-size: 13px;
+  float: right;
+}
+
+.one-message .loading img {
+  font-size: 10px;
+  font-weight: 100;
+  width: 55px;
+  height: 50px;
 }
 
 .nahida {
