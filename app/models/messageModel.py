@@ -3,7 +3,7 @@ from db import db
 
 class MessageModel(Model):
     user = IntegerField()
-    index = IntegerField()
+    index = IntegerField(0)
     question = CharField()
     ans = CharField()
     voice = CharField()
