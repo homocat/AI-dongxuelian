@@ -25,7 +25,7 @@ def register(user_data: UserSchema):
         disabled=False
     )
     new_user.save()
-    return user.id
+    return new_user.id
 
 @user.put("/me/password")
 def change_password(password: str, new_password: str, id):
