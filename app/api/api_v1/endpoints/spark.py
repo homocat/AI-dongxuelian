@@ -46,7 +46,7 @@ def checklen(text):
 @spark_api.post("/")
 async def index(req: str, current_user: int):
     
-    query = MessageModel.select().order_by(MessageModel.index.desc()).limit(1)
+    query = MessageModel.select().where(MessageModel.user == current_user).order_by(MessageModel.index.desc()).limit(1)
     last_message = query.get()
     last_index = last_message.index
 

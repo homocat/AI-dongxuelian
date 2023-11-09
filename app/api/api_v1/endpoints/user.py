@@ -11,7 +11,6 @@ def login(username: str, password: str):
     if not user or not verify_password(password, user.password):
         raise HTTPException(status_code=401, detail="Invalid username or password")
     return user.id
-    return {"access_token": access_token, "token_type": "bearer"}
 
 @user.post("/register")
 def register(user_data: UserSchema):
@@ -26,6 +25,13 @@ def register(user_data: UserSchema):
     )
     new_user.save()
     return new_user.id
+
+@user.post("/userinfo")
+def get_userinfo(id: int):
+    user = UserModel.get(UserModel.id == id)
+    return {
+        "username": user.username
+    }
 
 @user.put("/me/password")
 def change_password(password: str, new_password: str, id):

@@ -12,7 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-app.include_router(api_router, prefix="/v1")
+app.include_router(api_router, prefix="/api")
 app.mount("/v2", WSGIMiddleware(flask_app))
 # 添加 CORS 中间件
 app.add_middleware(
