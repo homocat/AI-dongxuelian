@@ -1,9 +1,11 @@
 <script setup>
-import { ElNotification } from 'element-plus'
 import { onMounted, ref } from 'vue';
 import axios from 'axios';
 import Nahida from './Nahida/Index.vue';
 import '../../public/font_m3kibal6kh/iconfont.css'
+import { toast } from '../composables/utils';
+import { useUserStore } from '../store/userStore'
+import { service } from '../axios';
 
 let input = ref('');
 let address = ref('');
@@ -11,23 +13,28 @@ let dialogs = []
 let loading = ref(false)
 let sended = ref(false)
 
+const userStore = useUserStore()
+
 async function handleSend() {
-  if (input.value.trim() === '' || input.value.length <= 3) {
-    ElNotification({
-      title: '请输入有效问题',
-      type: 'warning',
-      duration: 300
-    })
+  // const id = userStore.userInfo.id
+  const id = 1
+  if (!id) {
+    toast('请先登录', 'error')
     return
   }
-  dialogs.push({question: "尊嘟假嘟? o.O"})
-  const tmp = input.value.replace(/[\r\n]/g,"")
+  if (input.value.trim() === '' || input.value.length <= 3) {
+    toast('请输入有效问题', 'warning')
+    return
+  }
+  dialogs.push({ question: "尊嘟假嘟? o.O" })
+  const tmp = input.value.replace(/[\r\n]/g, "")
   input.value = '';
   sended.value = true
   loading.value = true
-  const response = await axios.post('http://101.42.31.45/v1/ai/', null, {
+  const response = await service.post('/ai/', null, {
     params: {
-      req: tmp
+      req: tmp,
+      current_user: id
     },
     responseType: 'blob'
   });
@@ -52,8 +59,8 @@ function playWavFile(url) {
   request.open('GET', url, true);
   request.responseType = 'arraybuffer';
 
-  request.onload = function() {
-    audioContext.decodeAudioData(request.response, function(buffer) {
+  request.onload = function () {
+    audioContext.decodeAudioData(request.response, function (buffer) {
       const source = audioContext.createBufferSource();
       source.buffer = buffer;
       source.connect(audioContext.destination);
@@ -67,11 +74,7 @@ function playWavFile(url) {
 onMounted(() => {
   window.addEventListener('keydown', (e) => {
     if (loading.value && e.key === 'Enter') {
-      ElNotification({
-        title: '请稍等',
-        type: 'warning',
-        duration: 300
-      })
+      toast('请稍等', 'warning')
       return
     }
     if (e.key === 'Enter' && e.shiftKey) {
@@ -93,27 +96,36 @@ onMounted(() => {
 
         <!-- 对话框 -->
         <div class="dialog">
+          <div v-for="(item, index) in userStore.history.data">
+            <div class="one-message">
+
+              <el-input v-model="item.__data__.question" disabled autosize class="ans" type="textarea" placeholder="Please input" />
+              <div v-if="loading && index === dialogs.length - 1" class="loading">
+                <img src="../images/Spinner-1s-200px.gif" alt="">
+              </div>
+              <div class="voice" :style="{ width: item.__data__.question.length * 12 + 'px' }" v-else @click="playAudio(item.ans)">
+                <span class="iconfont icon-voiceprint-full"></span>
+                <span class="seconds"> {{ item.__data__.question.length * 1.5 }}s </span>
+              </div>
+            </div>
+          </div>
+
           <div class="one-message" v-for="(item, index) in dialogs">
             <el-input v-model="item.question" disabled autosize class="ans" type="textarea" placeholder="Please input" />
             <div v-if="loading && index === dialogs.length - 1" class="loading">
               <img src="../images/Spinner-1s-200px.gif" alt="">
-              <span style="color: gray; font-size: 10px;"> 加载大约需要20s </span>
             </div>
-            <div class="voice" 
-              :style="{ width: item.question.length*12 + 'px' }" 
-              v-else 
-              @click="playAudio(item.ans)"
-            >
+            <div class="voice" :style="{ width: item.question.length * 12 + 'px' }" v-else @click="playAudio(item.ans)">
               <span class="iconfont icon-voiceprint-full"></span>
-              <span class="seconds"> {{ item.question.length }}s </span>
+              <span class="seconds"> {{ item.question.length * 1.5 }}s </span>
             </div>
 
           </div>
         </div>
 
         <!-- 输入框 -->
-        <el-input v-model="input" autosize type="textarea" placeholder="Shift + Enter 发送消息"
-          class="input-text" />
+        <el-input v-model="input" autosize type="textarea" placeholder="Shift + Enter 发送消息" class="input-text" />
+        <el-button @click="handleSend" class="send-btn">发送</el-button>
       </el-aside>
     </el-container>
   </div>
@@ -125,6 +137,10 @@ onMounted(() => {
   src: url('../../public/font_m3kibal6kh/iconfont.ttf') format('truetype');
 }
 
+.send-btn {
+  margin: 1px;
+}
+
 .iconfont {
   font-family: "iconfont" !important;
   font-size: 18px;
@@ -134,6 +150,7 @@ onMounted(() => {
   float: left;
   margin-left: 10px;
 }
+
 .gpt {
   text-align: center;
 }

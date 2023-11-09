@@ -1,6 +1,9 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 
-import Home from "../view/Home.vue"
+import { useUserStore } from "../store/userStore";
+
+import { getCookie } from "../composables/auth";
+import { toast } from "../composables/utils";
 
 const routes = [
   {
@@ -8,8 +11,8 @@ const routes = [
     component: () => import("../view/Home.vue"),
     children: [
       {
-        path: "/todolist",
-        component: () => import("../view/Home/TodoList.vue")
+        path: '/blog',
+        component: () => import("../view/Blog/Blog.vue")
       },
       {
         path: "/health",
@@ -41,5 +44,28 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes,
 });
+
+// 全屏前置导航守卫
+router.beforeEach((to, from) => {
+  // 获取token
+  const token = getCookie()
+  // 如果用户没有登录, 让用户强制跳转到登录页面
+  if (!token && to.path !== '/login') {
+    toast('请先登录', 'warning')
+    return '/login'
+  }
+  // 如果用户已经登录, 限制用户重复登录
+  if (token && to.path === '/login') {
+    toast('请勿重复登录', 'error')
+    return from.path ? from.path : '/'
+  }
+
+  // 如果用户已经登录, 就获取用户信息
+  const userStore = useUserStore()
+  if (token) {
+    userStore.getHistoryAction()
+    userStore.getUserInfo()
+  }
+})
 
 export default router;

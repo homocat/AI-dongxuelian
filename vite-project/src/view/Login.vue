@@ -1,22 +1,24 @@
 <script setup>
-import { reactive, ref } from 'vue'
+import { onMounted, onUnmounted, reactive, ref } from 'vue'
 import { ElNotification } from 'element-plus'
 import router from '../router';
+import { useUserStore } from '../store/userStore'
 
 let cnt = ref(0)
 
 let isLoginPage = ref(true)
 
-const labelPosition = ref('right')
+let username = ref('')
+let password = ref('')
+let email = ref('')
+let loading = ref(false)
 
-const formLabelAlign = reactive({
-  name: '',
-  region: '',
-  type: '',
-})
+const userStore = useUserStore()
 
 function handleLogin(username, password) {
-
+  loading.value = true
+  userStore.loginAction(username, password)
+    .finally(() => loading.value = false)
 }
 
 function jumpRegister() {
@@ -24,22 +26,18 @@ function jumpRegister() {
 }
 
 function forgetPasswd() {
-  cnt.value++
-  if (cnt.value >= 3) {
-    ElNotification({
-      title: '算了, 你进吧',
-      type: 'success',
-    })
-    router.push("/")
-  } else if(cnt.value == 1){
-
-    ElNotification({
-      title: '忘的好',
-      message: '下次别忘了',
-      type: 'success',
-    })
+}
+function handleKeyDown(e) {
+  if (e.key === 'Enter') {
+    handleLogin(username.value, password.value)
   }
 }
+onMounted(() => {
+  window.addEventListener('keydown', handleKeyDown)
+})
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeyDown)
+})
 </script>
 
 <template>
@@ -49,15 +47,16 @@ function forgetPasswd() {
       <h2>AI健康助手</h2>
 
       <!-- 输入框 -->
-      <el-form :label-position="labelPosition" label-width="100px" :model="formLabelAlign" style="max-width: 460px">
+      <form style="max-width: 460px" class="main-form">
         <!--      <el-form-item label="账号">-->
-        <el-input v-model="formLabelAlign.region" placeholder="用户名" class="input" />
+        <input v-model="username" placeholder="用户名" class="input" />
         <!--      </el-form-item>-->
         <!--      <el-form-item label="密码">-->
-        <el-input v-model="formLabelAlign.type" placeholder="密码" class="input" />
-        <el-input v-model="formLabelAlign.type" placeholder="确认密码" class="input" v-if="!isLoginPage"/>
+        <input v-model="password" placeholder="密码" class="input" />
+        <input v-model="email" placeholder="邮箱" class="input" v-if="!isLoginPage" />
+        <input placeholder="" class="input tmp"  v-if="isLoginPage" />
         <!--      </el-form-item>-->
-      </el-form>
+      </form>
 
       <!-- 登录按钮 -->
       <el-button type="primary" @click="handleLogin" class="button" v-if="isLoginPage">
@@ -76,7 +75,7 @@ function forgetPasswd() {
         </span>
       </div>
       <div v-else>
-        <span @click="isLoginPage=true">
+        <span @click="isLoginPage = true">
           已有密码, 点击登录
         </span>
       </div>
@@ -85,6 +84,25 @@ function forgetPasswd() {
 </template>
 
 <style scoped>
+.main-form {
+  width: 100vw; /* 设置容器宽度为视口宽度 */
+  display: flex;
+  flex-wrap: wrap; /* 设置换行 */
+  justify-content: center;
+  align-items: center;
+}
+
+.main-form .input {
+  height: 30px;
+  width: 80%;
+  margin: 10px;
+}
+
+.main-form .tmp {
+  background-color: transparent;
+  border-color: transparent;
+}
+
 .box {
   background-image: url("src/images/bk.jpg");
   width: 100vw;
