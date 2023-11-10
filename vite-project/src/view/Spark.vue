@@ -6,6 +6,7 @@ import '../../public/font_m3kibal6kh/iconfont.css'
 import { toast } from '../composables/utils';
 import { useUserStore } from '../store/userStore'
 import { service } from '../axios';
+import { splitDate } from '../composables/utils'
 
 let input = ref('');
 let address = ref('');
@@ -86,13 +87,12 @@ onMounted(() => {
 
 <template>
   <div class="gpt">
-    <h2 class="title">AI健康助手</h2>
     <el-container>
       <el-main class="f-position">
         <!-- nahida -->
         <Nahida class="nahida" />
       </el-main>
-      <el-aside width="50vw">
+      <el-aside width="66vw">
 
         <!-- 对话框 -->
         <div class="dialog">
@@ -100,13 +100,11 @@ onMounted(() => {
             <div class="one-message">
 
               <el-input v-model="item.__data__.question" disabled autosize class="ans" type="textarea" placeholder="Please input" />
-              <div v-if="loading && index === dialogs.length - 1" class="loading">
-                <img src="../images/Spinner-1s-200px.gif" alt="">
-              </div>
-              <div class="voice" :style="{ width: item.__data__.question.length * 12 + 'px' }" v-else @click="playAudio(item.ans)">
+              <div class="voice" :style="{ width: item.__data__.question.length * 22 + 'px' }" @click="playAudio(item.ans)">
                 <span class="iconfont icon-voiceprint-full"></span>
                 <span class="seconds"> {{ item.__data__.question.length * 1.5 }}s </span>
               </div>
+              <div class="date">{{ splitDate(item.__data__.date) }}</div>
             </div>
           </div>
 
@@ -155,13 +153,6 @@ onMounted(() => {
   text-align: center;
 }
 
-.title {
-  color: sandybrown;
-  margin-left: 5%;
-  width: 12%;
-  box-shadow: 10px 0 0 orange;
-  transition: width 0.3s ease;
-}
 
 .title:hover {
   width: 15%;
@@ -176,7 +167,7 @@ onMounted(() => {
   padding-top: 10px;
   box-shadow: 0px 4px 10px 5px rgba(128, 0, 0, 0.13);
   border-radius: 15px;
-  height: 35vh;
+  height: 75vh;
   overflow: hidden;
   overflow-y: scroll;
 }
@@ -204,11 +195,21 @@ onMounted(() => {
 .one-message {
   margin-left: 10px;
   margin-right: 10px;
+  padding-bottom: 5px;
+  width: 60%;
 }
 
 .one-message .ans {
   border-radius: 10px;
   background-color: rgb(103, 174, 103);
+}
+
+.one-message .date {
+  font-size: 10px;
+  border-radius: 10px;
+  color: gray;
+  float: right;
+  margin-bottom: 15px;
 }
 
 .one-message .voice {
@@ -234,8 +235,8 @@ onMounted(() => {
 }
 
 .nahida {
-  width: 150%;
-  height: 100%;
+  width: 1200px;
+  height: 600px;
   position: center;
 }
 

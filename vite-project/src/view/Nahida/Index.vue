@@ -24,7 +24,7 @@ export default {
     model = await Live2DModel.from('../../../public/Hiyori/Hiyori.model3.json');
 
     app.stage.addChild(model);
-    model.scale.set(0.23); // 调整缩放比例，一般原始资源尺寸非常大，需要缩小
+    model.scale.set(0.2); // 调整缩放比例，一般原始资源尺寸非常大，需要缩小
 
     // 绑定模型点击事件动作
     model.on('pointerdown', (hitAreas) => {

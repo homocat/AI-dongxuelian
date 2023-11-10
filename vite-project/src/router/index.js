@@ -11,6 +11,10 @@ const routes = [
     component: () => import("../view/Home.vue"),
     children: [
       {
+        path: '/',
+        redirect: "/spark"
+      },
+      {
         path: '/blog',
         component: () => import("../view/Blog/Blog.vue")
       },
