@@ -69,6 +69,7 @@ router.beforeEach((to, from) => {
   if (token) {
     userStore.getHistoryAction()
     userStore.getUserInfo()
+    userStore.setAvatar()
   }
 })
 

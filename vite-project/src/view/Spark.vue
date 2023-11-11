@@ -17,8 +17,7 @@ let sended = ref(false)
 const userStore = useUserStore()
 
 async function handleSend() {
-  // const id = userStore.userInfo.id
-  const id = 1
+  const id = userStore.userInfo.id
   if (!id) {
     toast('请先登录', 'error')
     return
@@ -83,6 +82,21 @@ onMounted(() => {
     }
   })
 })
+
+async function playHistoryAudio(index) {
+  const response = await service.post("/ai/play", null, {
+    params: {
+      current_user: userStore.userInfo.id,
+      index
+    },
+    responseType: 'blob'
+  })
+  const audioBlob = new Blob([response.data], { type: 'audio/wav' });
+  const audioUrl = URL.createObjectURL(audioBlob);
+  address.value = audioUrl
+
+  playAudio(audioUrl)
+}
 </script>
 
 <template>
@@ -100,7 +114,7 @@ onMounted(() => {
             <div class="one-message">
 
               <el-input v-model="item.__data__.question" disabled autosize class="ans" type="textarea" placeholder="Please input" />
-              <div class="voice" :style="{ width: item.__data__.question.length * 22 + 'px' }" @click="playAudio(item.ans)">
+              <div class="voice" :style="{ width: item.__data__.question.length * 22 + 'px' }" @click="playHistoryAudio(item.__data__.index)">
                 <span class="iconfont icon-voiceprint-full"></span>
                 <span class="seconds"> {{ item.__data__.question.length * 1.5 }}s </span>
               </div>

@@ -1,19 +1,21 @@
 import { defineStore } from 'pinia'
 import router from '../router/index'
 
-import { login, getHistory, getCurrentInfo } from '../api/manage'
+import { login, getHistory, getCurrentInfo, register, getAvatar } from '../api/manage'
 import { setCookie, removeCookie, getCookie } from '../composables/auth'
 import { toast } from '../composables/utils'
+import { service } from '../axios'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
     // 用户信息
     userInfo: {
       username: 'defualt',
-      id: 0
+      id: 0,
     },
+    avatar: null,
     // 历史记录
-    history: {sdf:123}
+    history: { sdf: 123 }
   }),
   actions: {
     // 登录
@@ -26,7 +28,7 @@ export const useUserStore = defineStore('user', {
             username,
             id: getCookie(),
           }
-          
+
           // 登录成功的弹窗
           toast('登录成功', 'success')
           // 跳转到首页
@@ -40,6 +42,24 @@ export const useUserStore = defineStore('user', {
       getCurrentInfo(id).then(res => {
         this.userInfo.username = res.data.username
       })
+    },
+    // 用户头像
+    async setAvatar() {
+      const id = getCookie()
+      try {
+        const response = await service.get(`/user/avatar/${id}`, {
+          params: {
+            id
+          },
+          responseType: 'blob' // 设置响应类型为blob，以便正确处理图片数据
+        });
+
+        const blob = new Blob([response.data]);
+        this.avatar = URL.createObjectURL(blob);
+      } catch (error) {
+        toast(error)
+        this.avatar = `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSF84M_riULl7nDa5SN48iC5dQc7sMr8iUjuu2MSIEmHQ&s`
+      }
     },
     // 获取历史记录
     async getHistoryAction() {
@@ -62,5 +82,22 @@ export const useUserStore = defineStore('user', {
       this.userInfo.username = ''
       this.userInfo.id = 0
     },
+    registerAction(username, password, email) {
+      register(username, password, email).then(res => {
+        // 存储token
+        setCookie(res.data)
+        this.userInfo = {
+          username,
+          id: getCookie(),
+        }
+
+        // 登录成功的弹窗
+        toast('登录成功', 'success')
+        // 跳转到首页
+        router.push('/spark')
+      }).catch(err => {
+        toast('用户已存在', 'warning')
+      })
+    }
   }
 })

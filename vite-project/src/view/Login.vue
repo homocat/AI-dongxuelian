@@ -3,6 +3,8 @@ import { onMounted, onUnmounted, reactive, ref } from 'vue'
 import { ElNotification } from 'element-plus'
 import router from '../router';
 import { useUserStore } from '../store/userStore'
+import { toast } from '../composables/utils';
+import { setCookie } from '../composables/auth';
 
 let cnt = ref(0)
 
@@ -15,28 +17,48 @@ let loading = ref(false)
 
 const userStore = useUserStore()
 
-function handleLogin(username, password) {
+function handleLogin() {
   loading.value = true
-  userStore.loginAction(username, password)
+  userStore.loginAction(username.value, password.value)
     .finally(() => loading.value = false)
 }
 
 function jumpRegister() {
   isLoginPage.value = false
+  window.removeEventListener('keydown', handleKeyDownLogin)
+  window.addEventListener('keydown', handleKeyDownRegister)
+}
+
+function handlRegister() {
+  userStore.registerAction(username.value, password.value, email.value)
 }
 
 function forgetPasswd() {
+  toast('正在以公共账号登录', 'warning')
+  setCookie(0)
+  router.push('/spark')
 }
-function handleKeyDown(e) {
+function handleKeyDownLogin(e) {
   if (e.key === 'Enter') {
     handleLogin(username.value, password.value)
   }
 }
+function handleKeyDownRegister(e) {
+  if (e.key === 'Enter') {
+    handlRegister()
+  }
+}
+function jumpLoginPage() {
+  isLoginPage.value = true
+  window.addEventListener('keydown', handleKeyDownLogin)
+  window.removeEventListener('keydown', handleKeyDownRegister)
+}
 onMounted(() => {
-  window.addEventListener('keydown', handleKeyDown)
+  window.addEventListener('keydown', handleKeyDownLogin)
 })
 onUnmounted(() => {
-  window.removeEventListener('keydown', handleKeyDown)
+  window.removeEventListener('keydown', handleKeyDownLogin) ||
+    window.removeEventListener('keydown', handleKeyDownRegister)
 })
 </script>
 
@@ -52,9 +74,9 @@ onUnmounted(() => {
         <input v-model="username" placeholder="用户名" class="input" />
         <!--      </el-form-item>-->
         <!--      <el-form-item label="密码">-->
-        <input v-model="password" placeholder="密码" class="input" />
+        <input v-model="password" placeholder="密码" type="password" class="input" />
         <input v-model="email" placeholder="邮箱" class="input" v-if="!isLoginPage" />
-        <input placeholder="" class="input tmp"  v-if="isLoginPage" />
+        <input placeholder="" class="input tmp" v-if="isLoginPage" />
         <!--      </el-form-item>-->
       </form>
 
@@ -63,19 +85,21 @@ onUnmounted(() => {
         登录
       </el-button>
       <!-- 注册按钮 -->
-      <el-button type="primary" @click="handleLogin" class="button" v-else>
+      <el-button type="primary" @click="handlRegister" class="button" v-else>
         注册
       </el-button>
       <div class="register" v-if="isLoginPage">
         <span @click="jumpRegister">
           点击注册
         </span>
-        <span @click="forgetPasswd">
-          忘记密码
-        </span>
+        <el-popconfirm title="游客登录" @confirm="forgetPasswd">
+          <template #reference>
+            <el-button>忘记密码</el-button>
+          </template>
+        </el-popconfirm>
       </div>
       <div v-else>
-        <span @click="isLoginPage = true">
+        <span @click="jumpLoginPage">
           已有密码, 点击登录
         </span>
       </div>
@@ -85,9 +109,11 @@ onUnmounted(() => {
 
 <style scoped>
 .main-form {
-  width: 100vw; /* 设置容器宽度为视口宽度 */
+  width: 100vw;
+  /* 设置容器宽度为视口宽度 */
   display: flex;
-  flex-wrap: wrap; /* 设置换行 */
+  flex-wrap: wrap;
+  /* 设置换行 */
   justify-content: center;
   align-items: center;
 }
@@ -96,6 +122,7 @@ onUnmounted(() => {
   height: 30px;
   width: 80%;
   margin: 10px;
+  margin-right: 15%;
 }
 
 .main-form .tmp {
