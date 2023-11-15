@@ -1,7 +1,14 @@
 import { defineStore } from 'pinia'
 import router from '../router/index'
 
-import { login, getHistory, getCurrentInfo, register, getAvatar } from '../api/manage'
+import { 
+  login, 
+  getHistory, 
+  getCurrentInfo, 
+  register, 
+  getAvatar,
+  get_all_comment,
+} from '../api/manage'
 import { setCookie, removeCookie, getCookie } from '../composables/auth'
 import { toast } from '../composables/utils'
 import { service } from '../axios'
@@ -15,9 +22,15 @@ export const useUserStore = defineStore('user', {
     },
     avatar: null,
     // 历史记录
-    history: { sdf: 123 }
+    history: { sdf: 123 },
+    comment: {}
   }),
   actions: {
+    async getAllCommentAction() {
+      get_all_comment().then(res => {
+        this.comment = res.data
+      })
+    },
     // 登录
     async loginAction(username, password) {
       const res = await login(username, password)
@@ -57,7 +70,6 @@ export const useUserStore = defineStore('user', {
         const blob = new Blob([response.data]);
         this.avatar = URL.createObjectURL(blob);
       } catch (error) {
-        toast(error)
         this.avatar = `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSF84M_riULl7nDa5SN48iC5dQc7sMr8iUjuu2MSIEmHQ&s`
       }
     },

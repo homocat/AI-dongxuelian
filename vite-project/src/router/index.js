@@ -16,7 +16,7 @@ const routes = [
       },
       {
         path: '/blog',
-        component: () => import("../view/Blog/Blog.vue")
+        component: () => import("../view/Blog.vue")
       },
       {
         path: "/health",
@@ -29,6 +29,14 @@ const routes = [
       {
         path: "/spark",
         component: () => import("../view/Spark.vue")
+      },
+      {
+        path: "/mindmap",
+        component: () => import("../view/MindMap.vue")
+      },
+      {
+        path: "/QA",
+        component: () => import("../view/QA.vue")
       }
     ]
   },
@@ -67,9 +75,10 @@ router.beforeEach((to, from) => {
   // 如果用户已经登录, 就获取用户信息
   const userStore = useUserStore()
   if (token) {
-    userStore.getHistoryAction()
+    token && userStore.getHistoryAction()
     userStore.getUserInfo()
     userStore.setAvatar()
+    userStore.getAllCommentAction()
   }
 })
 

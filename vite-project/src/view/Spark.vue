@@ -13,6 +13,7 @@ let address = ref('');
 let dialogs = []
 let loading = ref(false)
 let sended = ref(false)
+let isPlaying = ref(false)
 
 const userStore = useUserStore()
 
@@ -84,6 +85,7 @@ onMounted(() => {
 })
 
 async function playHistoryAudio(index) {
+  isPlaying.value = true
   const response = await service.post("/ai/play", null, {
     params: {
       current_user: userStore.userInfo.id,
@@ -95,7 +97,8 @@ async function playHistoryAudio(index) {
   const audioUrl = URL.createObjectURL(audioBlob);
   address.value = audioUrl
 
-  playAudio(audioUrl)
+  const sig = await playAudio(audioUrl)
+  sig && (isPlaying.value = false)
 }
 </script>
 
@@ -114,7 +117,10 @@ async function playHistoryAudio(index) {
             <div class="one-message">
 
               <el-input v-model="item.__data__.question" disabled autosize class="ans" type="textarea" placeholder="Please input" />
-              <div class="voice" :style="{ width: item.__data__.question.length * 22 + 'px' }" @click="playHistoryAudio(item.__data__.index)">
+            <div v-if="isVoiceOnloading && index === dialogs.length - 1" class="loading">
+              <img src="../images/Spinner-1s-200px.gif" alt="">
+            </div>
+              <div v-else class="voice" :style="{ width: item.__data__.question.length * 22 + 'px' }" @click="playHistoryAudio(item.__data__.index)">
                 <span class="iconfont icon-voiceprint-full"></span>
                 <span class="seconds"> {{ item.__data__.question.length * 1.5 }}s </span>
               </div>

@@ -21,7 +21,7 @@ const currentDate = ref(new Date())
   <div class="about">
     <el-row :gutter="20" class="main-container">
       <el-col :span="12" class="left">
-        <el-card class="user-card" :body-style="{ padding: '0px' }">
+        <el-card shadow="hover" class="user-card" :body-style="{ padding: '0px' }">
         <img
           :src="userStore.avatar"
           class="image"
@@ -34,21 +34,21 @@ const currentDate = ref(new Date())
           </div>
         </div>
       </el-card>
+        <el-upload v-if="id > 0" class="upload-demo" drag :action="local" :on-success="handleSuccess" multiple>
+          <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+          <div class="el-upload__text">
+            拖动到这里 <em>上传图片</em>
+          </div>
+          <template #tip>
+            <div class="el-upload__tip">
+              文件小于 2 MB
+            </div>
+          </template>
+        </el-upload>
 
 
       </el-col>
       <el-col :span="12" class="right">
-        <el-upload class="upload-demo" drag :action="local" :on-success="handleSuccess" multiple>
-          <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-          <div class="el-upload__text">
-            Drop file here or <em>click to upload</em>
-          </div>
-          <template #tip>
-            <div class="el-upload__tip">
-              jpg/png files with a size less than 500kb
-            </div>
-          </template>
-        </el-upload>
       </el-col>
     </el-row>
   </div>
@@ -91,11 +91,6 @@ const currentDate = ref(new Date())
   /* 根据需要设置容器的高度 */
 }
 
-.left {
-  height: auto;
-  padding: 30px;
-}
-
 .img-container {
   max-width: 55%;
   /* 设置容器的最大宽度 */
@@ -107,12 +102,17 @@ const currentDate = ref(new Date())
   margin: 15px;
   border-radius: 3%;
   border: transparent;
-  box-shadow: 2px 2px 12px 1px rgba(101, 93, 93, 0.5);
+  /* box-shadow: 2px 2px 12px 1px rgba(101, 93, 93, 0.5); */
   max-width: 100%;
   /* 设置图片的最大宽度为100% */
   height: 100%;
   /* 设置图片的高度为自动，以保持图片的纵横比 */
   display: block;
   /* 将图片设置为块级元素，以避免默认的行内元素间隙 */
+}
+
+.upload-demo {
+  margin-top: 10px;
+  width: 300px;
 }
 </style>

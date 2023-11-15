@@ -4,6 +4,7 @@ from fastapi.responses import FileResponse
 from gradio_client import Client
 from models.messageModel import MessageModel
 import SparkApi
+from peewee import DoesNotExist
 
 #以下密钥信息从控制台获取
 appid = "3efb053a"     #填写控制台中获取的 APPID 信息
@@ -19,8 +20,6 @@ Spark_url = "ws://spark-api.xf-yun.com/v1.1/chat"  # v1.5环境的地址
 spark_api = APIRouter()
 
 text = []
-
-
 
 # length = 0
 
@@ -45,13 +44,23 @@ def checklen(text):
     return text
 @spark_api.post("/")
 async def index(req: str, current_user: int):
-    
-    query = MessageModel.select().where(MessageModel.user == current_user).order_by(MessageModel.index.desc()).limit(1)
-    last_message = query.get()
-    last_index = last_message.index
+   # 得到当前用户上一条历史消息的 index 
+    try:
+        query = (
+            MessageModel
+            .select()
+            .where(MessageModel.user == current_user)
+            .order_by(MessageModel.index.desc())
+            .limit(1)
+        )
+        message = query.get()
+        last_index = message.index
+    except DoesNotExist:
+        # 处理 index 不存在的情况，给一个初始值
+        last_index = 0
 
     text.clear()
-    question = checklen(getText("user", "强制在60字以内回答尽量少的, 要像人一样没有逻辑的回答, 越有趣越好(包括标点符号, 注意精确表达感情): " + req))
+    question = checklen(getText("user", "强制在60字以内回答尽量少的, 要像人一样没有逻辑的回答, 越有趣越好(包括标点符号, 注意精确表达感情):" + req))
     SparkApi.answer =""
     SparkApi.main(appid,api_key,api_secret,Spark_url,domain,question)
     getText("assistant",SparkApi.answer)

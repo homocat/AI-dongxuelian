@@ -65,6 +65,20 @@ async function getAvatar(current_user) {
   }
 }
 
+function post_comment(user, content, reply) {
+  service.post('/QA/post', null, {
+    params: {
+      current_user: user,
+      content,
+      reply
+    }
+  })
+}
+
+function get_all_comment() {
+  return service.get('/QA/get')
+}
+
 
 export {
   login,
@@ -72,5 +86,7 @@ export {
   changePassword,
   getHistory,
   getCurrentInfo,
-  getAvatar
+  getAvatar,
+  get_all_comment,
+  post_comment
 };

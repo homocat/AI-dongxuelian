@@ -1,4 +1,8 @@
-from peewee import Model, IntegerField, CharField
+from peewee import (
+    IntegerField,
+    CharField,
+    Model
+)
 from db import db
 
 class MessageModel(Model):

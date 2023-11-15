@@ -44,17 +44,17 @@ function toggleDrawer() {
 <template>
   <div class="navbar">
     <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
-      <el-menu-item index="4">
+      <!-- <el-menu-item index="4">
         <router-link to="/">a </router-link>
-      </el-menu-item>
-      <el-menu-item index="1">
+      </el-menu-item> -->
+      <!-- <el-menu-item index="1">
         <router-link to="/about"> 个人主页 </router-link>
-      </el-menu-item>
+      </el-menu-item> -->
       <el-menu-item index="3">
         <router-link to="/blog"> blog </router-link>
       </el-menu-item>
       <el-menu-item index="2">
-        <router-link to="/health"> 身体数据 </router-link>
+        <router-link to="/QA"> 问答 </router-link>
       </el-menu-item>
       <el-menu-item index="12">
         <router-link to="/spark"> AI健康助手 </router-link>
