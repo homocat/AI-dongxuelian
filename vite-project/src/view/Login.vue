@@ -71,19 +71,19 @@ onUnmounted(() => {
       <!-- 输入框 -->
       <form style="max-width: 460px" class="main-form">
         <!--      <el-form-item label="账号">-->
-        <input v-model="username" placeholder="用户名" class="input" />
+        <input v-model="username" placeholder="用户名" class="input input-bordered w-full max-w-xs" />
         <!--      </el-form-item>-->
         <!--      <el-form-item label="密码">-->
-        <input v-model="password" placeholder="密码" type="password" class="input" />
+        <input v-model="password" placeholder="密码" type="password" class="input input-bordered w-full max-w-xs" />
         <input v-model="email" placeholder="邮箱" class="input" v-if="!isLoginPage" />
         <input placeholder="" class="input tmp" v-if="isLoginPage" />
         <!--      </el-form-item>-->
       </form>
 
       <!-- 登录按钮 -->
-      <el-button type="primary" @click="handleLogin" class="button" v-if="isLoginPage">
+      <button @click="handleLogin" class="btn btn-success w-6000" v-if="isLoginPage">
         登录
-      </el-button>
+      </button>
       <!-- 注册按钮 -->
       <el-button type="primary" @click="handlRegister" class="button" v-else>
         注册

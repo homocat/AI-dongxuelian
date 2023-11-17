@@ -37,19 +37,22 @@ const repassword = () => {
 
 <template>
   <div class="common-layout">
-    <el-container>
+    <el-container class="">
 
-      <el-header class="head">
-        <NavBar :drawer="drawer" @open-drawer="toggleDrawer"></NavBar>
-      </el-header>
-
-      <el-main class="main">
+    <el-header class="">
+      <NavBar :drawer="drawer" @open-drawer="toggleDrawer"></NavBar>
+    </el-header> 
+       
+      <el-main class="min-h-[90vh]">
         <router-view></router-view>
       </el-main>
+      
       <el-drawer v-model="drawer" size="50%" title="修改密码" :direction="direction" :before-close="handleClose">
         <form drawer-form>
-          <input v-model="password" type="password" placeholder="密码" >
-          <input v-model="new_password" type="password" placeholder="新密码">
+          <input v-model="password" type="password" placeholder="密码"
+            class="input input-bordered input-xs w-full max-w-xs">
+          <input v-model="new_password" type="password" placeholder="新密码"
+            class="input input-bordered input-xs w-full max-w-xs ml-auto">
         </form>
         <el-button type="primary" @click="repassword">确认修改</el-button>
       </el-drawer>

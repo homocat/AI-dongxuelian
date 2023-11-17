@@ -27,7 +27,7 @@ const commentHistory = userStore.comment
   <div class="QA">
     <template v-for="(item, index) in commentHistory">
 
-    <a-comment author="Socrates" :content="item.content" :datetime="item.date">
+    <a-comment :author="userStore.userInfo.username" :content="item.content" :datetime="item.date">
       <template #actions>
         <span class="action" key="heart" @click="onLikeChange">
           <span v-if="like">
@@ -44,8 +44,8 @@ const commentHistory = userStore.comment
           </span>
           <span v-else>
             <IconStar />
-          </span>
-          {{ 3 + (star ? 1 : 0) }}
+            </span>
+            {{ 3 + (star ? 1 : 0) }}
         </span>
         <span class="action" key="reply">
           <IconMessage /> Reply

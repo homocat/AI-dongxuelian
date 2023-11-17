@@ -42,59 +42,79 @@ function toggleDrawer() {
 </script>
 
 <template>
-  <div class="navbar">
-    <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
-      <!-- <el-menu-item index="4">
-        <router-link to="/">a </router-link>
-      </el-menu-item> -->
-      <!-- <el-menu-item index="1">
-        <router-link to="/about"> 个人主页 </router-link>
-      </el-menu-item> -->
-      <el-menu-item index="3">
-        <router-link to="/blog"> blog </router-link>
-      </el-menu-item>
-      <el-menu-item index="2">
-        <router-link to="/QA"> 问答 </router-link>
-      </el-menu-item>
-      <el-menu-item index="12">
-        <router-link to="/spark"> AI健康助手 </router-link>
-      </el-menu-item>
-
-      <el-menu-item index="5" class="index-5">
-        <div class="nouser" v-if="!userStore.userInfo.id">
-          <div @click="toLoginPage">未登录, 点击登录</div>
+  <div class="navbar bg-base-100">
+      <div class="navbar-start">
+        <div class="dropdown">
+          <label tabindex="0" class="btn btn-ghost btn-circle">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+            </svg>
+          </label>
+          <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+            <li><router-link to="/about">home</router-link></li>
+            <li><router-link to="/QA">问答</router-link></li>
+            <li><router-link to="/spark">健康助手</router-link></li>
+          </ul>
         </div>
-        <div class="user" v-else>
+      </div>
+      <div class="navbar-center">
+        <div class="btn btn-ghost">
+          <router-link to="/blog"> blog </router-link>
+        </div>
 
-          <!-- 用户头像 -->
-          <div class="demo-basic--circle">
-            <div class="block">
-              <router-link to="/about">
-                <img :src="userStore.avatar" alt="" class="user-avatar">
-              </router-link>
-            </div>
+        <div class="btn btn-ghost">
+          <router-link to="/QA"> 问答 </router-link>
+        </div>
+
+
+        <div class="btn btn-ghost">
+          <router-link to="/spark"> AI健康助手 </router-link>
+        </div>
+
+      </div>
+      <div class="navbar-end">
+        <div>
+          <div class="nouser" v-if="!userStore.userInfo.id">
+            <div @click="toLoginPage">未登录, 点击登录</div>
           </div>
-          <!-- 用户名 -->
-          <el-dropdown class="container">
-            <span class="el-dropdown-link">
-              <span class="userinfo">
-                {{ userStore.userInfo.username }}
-              </span>
-            </span>
+          <div class="user" v-else>
 
-            <el-icon class="el-icon--right">
-              <arrow-down />
-            </el-icon>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
-                <el-dropdown-item @click="openDrawer">修改密码</el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
+            <!-- 用户头像 -->
+            <div class="w-32 rounded">
+              <div class="block">
+                <router-link to="/about">
+                  <img :src="userStore.avatar" alt="" class="user-avatar">
+                </router-link>
+              </div>
+            </div>
+            <!-- 用户名 -->
+            <el-dropdown class="container">
+              <span class="el-dropdown-link">
+                <span class="userinfo">
+                  {{ userStore.userInfo.username }}
+                </span>
+              </span>
+
+              <el-icon class="el-icon--right">
+                <arrow-down />
+              </el-icon>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
+                  <el-dropdown-item @click="openDrawer">修改密码</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </div>
         </div>
-      </el-menu-item>
-    </el-menu>
+      </div>
+
+    
+
+
+
+
+
     <div class="h-6" />
   </div>
 </template>
@@ -140,4 +160,5 @@ function toggleDrawer() {
 
 .user {
   display: flex;
-}</style>
+}
+</style>
