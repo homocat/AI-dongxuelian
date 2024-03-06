@@ -24,7 +24,7 @@ async function handleSend() {
     return
   }
   if (input.value.trim() === '' || input.value.length <= 3) {
-    toast('请输入有效问题', 'warning')
+    toast(input.value + '请输入有效问题', 'warning')
     return
   }
   dialogs.push({ question: "尊嘟假嘟? o.O" })
@@ -48,10 +48,6 @@ async function handleSend() {
   dialogs.push({ question: tmp, ans: audioUrl })
   sended.value = false
   loading.value = false
-}
-
-function playAudio(url) {
-  playWavFile(url)
 }
 
 function playWavFile(url) {
@@ -83,8 +79,9 @@ onMounted(() => {
     }
   })
 })
-
+let audio_obj = ref({})
 async function playHistoryAudio(index) {
+  // audio_obj.value?.pause()
   isPlaying.value = true
   const response = await service.post("/ai/play", null, {
     params: {
@@ -97,8 +94,7 @@ async function playHistoryAudio(index) {
   const audioUrl = URL.createObjectURL(audioBlob);
   address.value = audioUrl
 
-  const sig = await playAudio(audioUrl)
-  sig && (isPlaying.value = false)
+  audio_obj.value = playWavFile(audioUrl)
 }
 </script>
 
@@ -113,37 +109,47 @@ async function playHistoryAudio(index) {
 
         <!-- 对话框 -->
         <div class="dialog">
+
           <div v-for="(item, index) in userStore.history.data">
-            <div class="one-message">
-
-              <el-input v-model="item.__data__.question" disabled autosize class="ans" type="textarea" placeholder="Please input" />
-            <div v-if="isVoiceOnloading && index === dialogs.length - 1" class="loading">
-              <img src="../images/Spinner-1s-200px.gif" alt="">
-            </div>
-              <div v-else class="voice" :style="{ width: item.__data__.question.length * 22 + 'px' }" @click="playHistoryAudio(item.__data__.index)">
-                <span class="iconfont icon-voiceprint-full"></span>
-                <span class="seconds"> {{ item.__data__.question.length * 1.5 }}s </span>
+            <div class="chat chat-end">
+              <div class="chat-image avatar">
+                <div class="w-10 rounded-full">
+                  <img alt="Tailwind CSS chat bubble component" :src="userStore.avatar" />
+                </div>
               </div>
-              <div class="date">{{ splitDate(item.__data__.date) }}</div>
-            </div>
-          </div>
-
-          <div class="one-message" v-for="(item, index) in dialogs">
-            <el-input v-model="item.question" disabled autosize class="ans" type="textarea" placeholder="Please input" />
-            <div v-if="loading && index === dialogs.length - 1" class="loading">
-              <img src="../images/Spinner-1s-200px.gif" alt="">
-            </div>
-            <div class="voice" :style="{ width: item.question.length * 12 + 'px' }" v-else @click="playAudio(item.ans)">
-              <span class="iconfont icon-voiceprint-full"></span>
-              <span class="seconds"> {{ item.question.length * 1.5 }}s </span>
+              <div class="chat-header">{{ userStore.userInfo.username }}
+                <time class="text-xs opacity-50">{{ item.__data__.date }}</time>
+              </div>
+              <div class="chat-bubble chat-bubble-success">{{ item.__data__.question }}</div>
             </div>
 
+            <div class="chat chat-start">
+              <div class="chat-image avatar">
+                <div class="w-10 rounded-full">
+                  <img alt="Tailwind CSS chat bubble component" src="../images/bk.jpg" />
+                </div>
+              </div>
+              <div v-if="isVoiceOnloading && index === dialogs.length - 1" class="loading">
+                <span class="loading loading-ring loading-sm"></span>
+              </div>
+              <div v-else class="chat-bubble chat-bubble-neutral btn btn-neutral"
+                @click="playHistoryAudio(item.__data__.index)">
+                {{ item.__data__.ans }}
+              </div>
+              <div class="chat-header">
+                AI
+                <time class="text-xs opacity-50">{{ splitDate(item.__data__.date) }}</time>
+              </div>
+            </div>
           </div>
         </div>
 
         <!-- 输入框 -->
-        <el-input v-model="input" autosize type="textarea" placeholder="Shift + Enter 发送消息" class="input-text" />
-        <el-button @click="handleSend" class="send-btn">发送</el-button>
+        <div class=" flex w-[100%]">
+          <textarea v-model="input" class="input input-primary flex-1 m-10" placeholder="Shift + Enter 发送消息"></textarea>
+{{ input }}
+          <button @click="handleSend" class="btn btn-primary flex-none m-10">发送</button>
+        </div>
       </el-aside>
     </el-container>
   </div>
@@ -180,14 +186,12 @@ async function playHistoryAudio(index) {
 }
 
 .dialog {
-  margin-left: 10px;
-  margin-right: 30px;
-  margin-top: 30px;
+  margin: 10px;
   padding: 10px;
   padding-top: 10px;
   box-shadow: 0px 4px 10px 5px rgba(128, 0, 0, 0.13);
   border-radius: 15px;
-  height: 75vh;
+  height: 70vh;
   overflow: hidden;
   overflow-y: scroll;
 }
@@ -255,9 +259,10 @@ async function playHistoryAudio(index) {
 }
 
 .nahida {
-  width: 1200px;
+  /* width: 1200px; */
   height: 600px;
-  position: center;
+  flex: 1;
+  /* position: center; */
 }
 
 .f-position::-webkit-scrollbar {

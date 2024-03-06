@@ -94,7 +94,7 @@ onUnmounted(() => {
         </span>
         <el-popconfirm title="游客登录" @confirm="forgetPasswd">
           <template #reference>
-            <el-button>忘记密码</el-button>
+            <div>忘记密码</div>
           </template>
         </el-popconfirm>
       </div>
@@ -109,7 +109,7 @@ onUnmounted(() => {
 
 <style scoped>
 .main-form {
-  width: 100vw;
+  width: 100%;
   /* 设置容器宽度为视口宽度 */
   display: flex;
   flex-wrap: wrap;
@@ -122,7 +122,7 @@ onUnmounted(() => {
   height: 30px;
   width: 80%;
   margin: 10px;
-  margin-right: 15%;
+  //margin-right: 15%;
 }
 
 .main-form .tmp {
@@ -188,7 +188,7 @@ onUnmounted(() => {
 
 .button {
   margin: 10px auto;
-  width: 100%;
+  width: 80%;
   height: 40px;
   font-size: 16px;
 }

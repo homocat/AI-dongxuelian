@@ -33,25 +33,33 @@ const repassword = () => {
     drawer.value = false
   })
 }
+
+const theme = ref(true)
+const handleChangeTheme = (darkTheme) => {
+  theme.value = darkTheme
+}
 </script>
 
 <template>
-  <div class="common-layout">
-    <el-container>
+  <div class="common-layout" :data-theme="theme ? 'dark' : 'light'">
+    <el-container class="">
 
-      <el-header class="head">
-        <NavBar :drawer="drawer" @open-drawer="toggleDrawer"></NavBar>
-      </el-header>
-
-      <el-main class="main">
+    <el-header class="">
+      <NavBar :drawer="drawer" @onChangeTheme="handleChangeTheme" @open-drawer="toggleDrawer"></NavBar>
+    </el-header> 
+       
+      <el-main class="min-h-[90vh]">
         <router-view></router-view>
       </el-main>
+      
       <el-drawer v-model="drawer" size="50%" title="修改密码" :direction="direction" :before-close="handleClose">
         <form drawer-form>
-          <input v-model="password" type="password" placeholder="密码" >
-          <input v-model="new_password" type="password" placeholder="新密码">
+          <input v-model="password" type="password" placeholder="密码"
+            class="input input-bordered m-2 input-xs w-full max-w-xs">
+          <input v-model="new_password" type="password" placeholder="新密码"
+            class="input input-bordered m-2 input-xs w-full max-w-xs">
         </form>
-        <el-button type="primary" @click="repassword">确认修改</el-button>
+        <el-button type="primary" @click="repassword" class="m-5">确认修改</el-button>
       </el-drawer>
     </el-container>
   </div>
