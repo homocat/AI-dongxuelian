@@ -71,19 +71,19 @@ onUnmounted(() => {
       <!-- 输入框 -->
       <form style="max-width: 460px" class="main-form">
         <!--      <el-form-item label="账号">-->
-        <input v-model="username" placeholder="用户名" class="input input-bordered w-full max-w-xs" />
+        <input v-model="username" placeholder="用户名" class="input" />
         <!--      </el-form-item>-->
         <!--      <el-form-item label="密码">-->
-        <input v-model="password" placeholder="密码" type="password" class="input input-bordered w-full max-w-xs" />
+        <input v-model="password" placeholder="密码" type="password" class="input" />
         <input v-model="email" placeholder="邮箱" class="input" v-if="!isLoginPage" />
         <input placeholder="" class="input tmp" v-if="isLoginPage" />
         <!--      </el-form-item>-->
       </form>
 
       <!-- 登录按钮 -->
-      <button @click="handleLogin" class="btn btn-success w-6000" v-if="isLoginPage">
+      <el-button type="primary" @click="handleLogin" class="button" v-if="isLoginPage">
         登录
-      </button>
+      </el-button>
       <!-- 注册按钮 -->
       <el-button type="primary" @click="handlRegister" class="button" v-else>
         注册
@@ -94,7 +94,7 @@ onUnmounted(() => {
         </span>
         <el-popconfirm title="游客登录" @confirm="forgetPasswd">
           <template #reference>
-            <el-button>忘记密码</el-button>
+            <div>忘记密码</div>
           </template>
         </el-popconfirm>
       </div>
@@ -109,7 +109,7 @@ onUnmounted(() => {
 
 <style scoped>
 .main-form {
-  width: 100vw;
+  width: 100%;
   /* 设置容器宽度为视口宽度 */
   display: flex;
   flex-wrap: wrap;
@@ -122,7 +122,7 @@ onUnmounted(() => {
   height: 30px;
   width: 80%;
   margin: 10px;
-  margin-right: 15%;
+  //margin-right: 15%;
 }
 
 .main-form .tmp {
@@ -188,7 +188,7 @@ onUnmounted(() => {
 
 .button {
   margin: 10px auto;
-  width: 100%;
+  width: 80%;
   height: 40px;
   font-size: 16px;
 }

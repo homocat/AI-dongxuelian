@@ -20,7 +20,7 @@ const currentDate = ref(new Date())
 <template>
   <div class="about">
     <el-row :gutter="20" class="main-container">
-      <el-col :span="12" class="left">
+      <el-col :span="8" class="left">
         <el-card shadow="hover" class="user-card" :body-style="{ padding: '0px' }">
         <img
           :src="userStore.avatar"
@@ -48,7 +48,10 @@ const currentDate = ref(new Date())
 
 
       </el-col>
-      <el-col :span="12" class="right">
+      <el-col :span="16" class="right">
+        <iframe src="https://xugaoyi.com/" class="h-[100%] w-[100%]">
+
+        </iframe>
       </el-col>
     </el-row>
   </div>

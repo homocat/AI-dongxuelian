@@ -24,7 +24,7 @@ async function handleSend() {
     return
   }
   if (input.value.trim() === '' || input.value.length <= 3) {
-    toast('请输入有效问题', 'warning')
+    toast(input.value + '请输入有效问题', 'warning')
     return
   }
   dialogs.push({ question: "尊嘟假嘟? o.O" })
@@ -146,8 +146,8 @@ async function playHistoryAudio(index) {
 
         <!-- 输入框 -->
         <div class=" flex w-[100%]">
-          <textarea class="input input-primary flex-1 m-10" placeholder="Shift + Enter 发送消息"></textarea>
-
+          <textarea v-model="input" class="input input-primary flex-1 m-10" placeholder="Shift + Enter 发送消息"></textarea>
+{{ input }}
           <button @click="handleSend" class="btn btn-primary flex-none m-10">发送</button>
         </div>
       </el-aside>

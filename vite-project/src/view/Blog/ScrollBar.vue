@@ -4,16 +4,29 @@
 
 <template>
   <div class="scroll">
-    <div class="block text-center">
-    <span class="demonstration"
-      >Switch when indicator is hovered (default)</span
-    >
-    <el-carousel height="150px">
-      <el-carousel-item v-for="item in 4" :key="item" style="height: 600px;">
-        <h3 class="small justify-center" text="2xl">{{ item }}</h3>
-      </el-carousel-item>
-    </el-carousel>
-  </div>
+    <div class="carousel carousel-center rounded-box">
+      <div class="carousel-item">
+        <img src="../images/" alt="Pizza" />
+      </div>
+      <div class="carousel-item">
+        <img src="/images/stock/photo-1565098772267-60af42b81ef2.jpg" alt="Pizza" />
+      </div>
+      <div class="carousel-item">
+        <img src="/images/stock/photo-1572635148818-ef6fd45eb394.jpg" alt="Pizza" />
+      </div>
+      <div class="carousel-item">
+        <img src="/images/stock/photo-1494253109108-2e30c049369b.jpg" alt="Pizza" />
+      </div>
+      <div class="carousel-item">
+        <img src="/images/stock/photo-1550258987-190a2d41a8ba.jpg" alt="Pizza" />
+      </div>
+      <div class="carousel-item">
+        <img src="/images/stock/photo-1559181567-c3190ca9959b.jpg" alt="Pizza" />
+      </div>
+      <div class="carousel-item">
+        <img src="/images/stock/photo-1601004890684-d8cbf643f5f2.jpg" alt="Pizza" />
+      </div>
+    </div>
   </div>
 </template>
 
